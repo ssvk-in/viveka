@@ -253,12 +253,13 @@ p {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
 }
 
-/* Subject Card Component */
+/* Subject Card Component - Support both a and div elements */
 .viveka-subject-card {
     background: var(--panel);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-xl);
     padding: var(--space-xl);
+    text-decoration: none;
     color: inherit;
     display: block;
     transition: transform var(--transition-fast), border-color var(--transition-normal);
@@ -266,8 +267,21 @@ p {
 }
 
 .viveka-subject-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,209,102,0.45);
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Handle non-clickable subject cards */
+div.viveka-subject-card {
+    cursor: default;
+    opacity: 0.8;
+}
+
+div.viveka-subject-card:hover {
     transform: translateY(-1px);
-    border-color: rgba(255,209,102,0.25);
+    opacity: 0.9;
 }
 
 .viveka-subject-card h3 {

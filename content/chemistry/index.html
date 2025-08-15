@@ -55,11 +55,14 @@
             padding: var(--space-lg);
             border: 1px solid rgba(255,255,255,0.08);
             transition: transform var(--transition-fast), border-color var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
         }
 
         .tool-card:hover {
             transform: translateY(-1px);
             border-color: rgba(255,209,102,0.25);
+            text-decoration: none;
         }
 
         .tool-card h4 {
@@ -88,17 +91,6 @@
         .tool-card.coming-soon:hover {
             opacity: 0.8;
         }
-
-        .tool-card a {
-            color: var(--hit);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .tool-card a:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -118,10 +110,10 @@
             <div class="tool-section">
                 <h3>Interactive Tools</h3>
                 <div class="tools-grid">
-                    <div class="tool-card available">
-                        <h4><a href="interactive-tools/periodic-table.html">Interactive Periodic Table</a> <span class="viveka-badge viveka-badge-success">Available</span></h4>
+                    <a href="interactive-tools/periodic-table.html" class="tool-card available">
+                        <h4>Periodic Table <span class="viveka-badge viveka-badge-success">Available</span></h4>
                         <p>Complete 118 elements with detailed information, properties, and interactive features. Search and filter by element groups.</p>
-                    </div>
+                    </a>
                     
                     <div class="tool-card coming-soon">
                         <h4>Chemical Equation Balancer <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
