@@ -34,6 +34,8 @@ Viveka is an open source interactive learning platform designed to transform tra
 4. **No Rushing:** Resist urge to build everything at once
 5. **Document Progress:** Update status document with each step
 6. **Professional Consistency:** Maintain consistent design and experience throughout
+7. **Only Show What Works:** If something doesn't work, don't display it on screen
+8. **No Meaningless Content:** Every element on screen should serve a purpose
 
 #### Design & Consistency Standards:
 - **Visual Consistency:** Unified color scheme, typography, and spacing across all pages
@@ -50,6 +52,8 @@ Viveka is an open source interactive learning platform designed to transform tra
 - **Easier Collaboration:** Clear progress points for team members
 - **Prevents Overwhelm:** Large project broken into manageable pieces
 - **Ensures Consistency:** Design patterns established early and maintained
+- **User Trust:** Only functional content builds credibility with educators
+- **Clean Interface:** No clutter or confusing placeholder content
 
 ---
 
@@ -80,7 +84,9 @@ Viveka is an open source interactive learning platform designed to transform tra
 - [x] **UI CLEANUP:** Fixed empty card display issues
 - [x] **UI CLEANUP:** Changed all subject cards to use div elements consistently
 - [x] **UI CLEANUP:** Simplified header - removed subtitle and status messages
-- [x] **UI CLEANUP:** Updated header to "VIVEKA" (all caps, left-aligned)
+- [x] **UI CLEANUP:** Removed meaningless footer content from Physics page
+- [x] **UI CLEANUP:** Deleted non-functional optics lab file and all references
+- [x] **PRINCIPLE:** Only display content that actually works - no fake "Available" badges
 
 ### 📁 Current Repository Structure
 ```
