@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry - Viveka Interactive Learning</title>
+    <link rel="stylesheet" href="../../shared/viveka-core.css">
+    <style>
+        .header {
+            margin-bottom: var(--space-xxl);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: var(--space-md);
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .tools-container {
+            display: grid;
+            gap: var(--space-xl);
+        }
+
+        .tool-section {
+            background: var(--panel-2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            border-left: 4px solid var(--accent);
+        }
+
+        .tool-section h3 {
+            color: var(--accent);
+            margin-bottom: var(--space-lg);
+            font-size: 1.2rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .tool-card {
+            background: var(--panel);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform var(--transition-fast), border-color var(--transition-normal);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255,209,102,0.25);
+        }
+
+        .tool-card h4 {
+            margin: 0 0 var(--space-md) 0;
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .tool-card.available {
+            border-left: 4px solid var(--hit);
+        }
+
+        .tool-card.coming-soon {
+            opacity: 0.7;
+            border-left: 4px solid var(--chip-b);
+        }
+
+        .tool-card.coming-soon:hover {
+            opacity: 0.8;
+        }
+
+        .tool-card a {
+            color: var(--hit);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .tool-card a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Viveka Breadcrumb Navigation -->
+    <div class="viveka-breadcrumb">
+        <a href="../../index.html">Home</a> > <strong>Chemistry</strong>
+    </div>
+
+    <div class="viveka-app">
+        <div class="header">
+            <h1>CHEMISTRY</h1>
+            <p>Interactive Tools & Molecular Simulations</p>
+        </div>
+
+        <div class="tools-container">
+            
+            <div class="tool-section">
+                <h3>Interactive Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-card available">
+                        <h4><a href="interactive-tools/periodic-table.html">Interactive Periodic Table</a> <span class="viveka-badge viveka-badge-success">Available</span></h4>
+                        <p>Complete 118 elements with detailed information, properties, and interactive features. Search and filter by element groups.</p>
+                    </div>
+                    
+                    <div class="tool-card coming-soon">
+                        <h4>Chemical Equation Balancer <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Interactive tool for balancing chemical equations with step-by-step guidance and visual representations.</p>
+                    </div>
+                    
+                    <div class="tool-card coming-soon">
+                        <h4>Molecular Structure Builder <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>3D molecular modeling tool for building and visualizing chemical structures and bonds.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

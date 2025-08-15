@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Viveka metadata -->
+<meta name="viveka:subject" content="Chemistry">
+<meta name="viveka:topic" content="Interactive Periodic Table">
+<meta name="viveka:objectives" content="Explore chemical elements and their properties">
+
+<title>Interactive Periodic Table - Viveka Chemistry</title>
+<style>
+  :root {
+    --bg:#0f1115; --panel:#1a1d24; --panel-2:#222634; --text:#e8ecf1; --muted:#aab3c0; --accent:#ffd166;
+    --chip:#2a2f3f; --chip-b:#39425a; --hit:#4cc9f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: var(--bg); color: var(--text);
+  }
+  h1 {
+    text-align: center; margin: 12px 0 8px;
+    font-weight: 700; font-size: 1.4rem;
+  }
+  .app {
+    max-width: 1100px; margin: 0 auto; padding: 12px;
+  }
+  .controls {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0;
+    justify-content: center;
+  }
+  input[type="search"] {
+    flex: 1 1 260px;
+    min-width: 180px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--panel);
+    color: var(--text);
+    outline: none;
+    font-size: 1rem;
+  }
+  .chips {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .chip {
+    padding: 6px 10px; border-radius: 999px; background: var(--chip);
+    border: 1px solid var(--chip-b); font-size: 0.8rem; cursor: pointer; user-select: none;
+    transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+  }
+  .chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111;
+  }
+  .chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111;
+    outline: 2px solid var(--hit);
+  }
+  .wrap {
+    background: var(--panel-2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 8px;
+  }
+  .table {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(28px, 1fr));
+    gap: 4px;
+  }
+  .element {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    text-align: center;
+    padding: 6px 2px;
+    cursor: pointer;
+    transition: transform 0.08s ease, border-color 0.15s ease;
+    user-select: none;
+  }
+  .element:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255,209,102,0.45);
+  }
+  .number {
+    font-size: 0.6rem;
+    color: var(--muted);
+  }
+  .symbol {
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 0.3px;
+    color: white;
+  }
+  .name {
+    font-size: 0.68rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 4px;
+  }
+  .element.hit {
+    outline: 2px solid var(--hit);
+  }
+  .element[data-cat] {
+    position: relative; overflow: hidden;
+  }
+  .element[data-cat]::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 4px;
+    opacity: 0.9;
+  }
+  .cat-alkali::after { background: #ff595e; }
+  .cat-alkaline::after { background: #ffca3a; }
+  .cat-transition::after { background: #8ac926; }
+  .cat-post-transition::after { background: #1982c4; }
+  .cat-metalloid::after { background: #6a4c93; }
+  .cat-nonmetal::after { background: #b8b8ff; }
+  .cat-halogen::after { background: #ff9f1c; }
+  .cat-noble::after { background: #9b5de5; }
+  .cat-lanthanide::after { background: #2ec4b6; }
+  .cat-actinide::after { background: #e71d36; }
+
+  .details {
+    position: sticky; bottom: 0; left: 0; width: 100%; background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-top: 12px;
+    max-height: 440px; overflow-y: auto;
+  }
+  .row {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .row .pill {
+    background: #0b5; color: #012; padding: 4px 8px;
+    border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+  }
+  .kv {
+    color: var(--muted); font-size: 0.9rem; min-width: 75px;
+  }
+  .kv b {
+    color: var(--text);
+  }
+  .model {
+    display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-top: 12px;
+  }
+  .canvas-wrap {
+    position: relative; width: 180px; height: 180px; background: #0b0f18;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  canvas {
+    width: 160px; height: 160px;
+  }
+  .legend-mini {
+    font-size: 0.75rem; color: var(--muted); max-width: 340px;
+  }
+  section {
+    margin-top: 12px;
+    padding: 8px;
+    background: #171c2a;
+    border-radius: 8px;
+  }
+  section h3 {
+    margin: 0 0 6px 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--muted);
+    padding-bottom: 2px;
+  }
+  section p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+  .details::-webkit-scrollbar {
+    width: 8px;
+  }
+  .details::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+  }
+  @media (max-width: 700px) {
+    .table {
+      grid-template-columns: repeat(18, minmax(24px, 1fr));
+      gap: 3px;
+    }
+    .name {
+      display: none;
+    }
+    .canvas-wrap {
+      width: 150px; height: 150px;
+    }
+    canvas {
+      width: 130px; height: 130px;
+    }
+    .kv {
+      min-width: 60px;
+    }
+  }
+</style>
+</head>
+<body>
+<!-- Viveka Breadcrumb Navigation -->
+<div class="viveka-breadcrumb" style="background: rgba(15,17,21,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; font-size: 0.9rem; color: #aab3c0; position: sticky; top: 0; z-index: 100;">
+    <a href="../../../index.html" style="color: #4cc9f0; text-decoration: none;">Home</a> > 
+    <a href="../index.html" style="color: #4cc9f0; text-decoration: none;">Chemistry</a> > 
+    <strong>Periodic Table</strong>
+</div>
+<div class="app" role="main" aria-label="Interactive Periodic Table">
+  <h1>PERIODIC TABLE</h1>
+  <div class="controls" role="search">
+    <input id="q" type="search" placeholder="Search elements (name, symbol, number, group=, period=, category=halogen, etymology, scientist)" autocomplete="off" aria-label="Search elements" />
+    <div class="chips" id="chips" role="group" aria-label="Category filters"></div>
+  </div>
+  <div class="wrap">
+    <div class="table" id="ptable" role="grid" aria-label="Periodic Table of Elements"></div>
+  </div>
+  <div class="details" id="details" aria-live="polite" aria-atomic="true">Tap an element to see details</div>
+</div>
+
+<script>
+const categories = [
+  {id:'alkali', label:'Alkali metals'},
+  {id:'alkaline', label:'Alkaline earth metals'},
+  {id:'transition', label:'Transition metals'},
+  {id:'post-transition', label:'Post-transition metals'},
+  {id:'metalloid', label:'Metalloids'},
+  {id:'nonmetal', label:'Reactive nonmetals'},
+  {id:'halogen', label:'Halogens'},
+  {id:'noble', label:'Noble gases'},
+  {id:'lanthanide', label:'Lanthanides'},
+  {id:'actinide', label:'Actinides'}
+];
+
+const elements = [
+{num:1,sym:"H",name:"Hydrogen",mass:"1.008",group:1,period:1,cat:"nonmetal",phase:"gas",radius:53,
+  etymology:"From Greek 'hydro' (water) and 'genes' (creator), since burning hydrogen forms water.",
+  scientist:"Discovered by Henry Cavendish in 1766.",
+  story:"Most abundant element in the universe, central in early chemical research and star composition."},
+{num:2,sym:"He",name:"Helium",mass:"4.0026",group:18,period:1,cat:"noble",phase:"gas",radius:31,
+  etymology:"Named after 'Helios', the Greek sun god, discovered in the solar spectrum.",
+  scientist:"Discovered by Pierre Janssen and Joseph Lockyer in 1868 during a solar eclipse.",
+  story:"First element discovered in the Sun, not on Earth."},
+{num:3,sym:"Li",name:"Lithium",mass:"6.94",group:1,period:2,cat:"alkali",phase:"solid",radius:167,
+  etymology:"From Greek 'lithos' meaning 'stone'.",
+  scientist:"Discovered by Johan August Arfwedson in 1817.",
+  story:"Lightest metal and important in battery technology."},
+{num:4,sym:"Be",name:"Beryllium",mass:"9.0122",group:2,period:2,cat:"alkaline",phase:"solid",radius:112,
+  etymology:"From Greek 'beryllos', a mineral (beryl).",
+  scientist:"Discovered by Louis-Nicolas Vauquelin in 1798.",
+  story:"Valuable for aerospace materials due to high stiffness and low weight."},
+{num:5,sym:"B",name:"Boron",mass:"10.81",group:13,period:2,cat:"metalloid",phase:"solid",radius:87,
+  etymology:"From Arabic 'baura', originally from Persian 'burah'.",
+  scientist:"Isolated by Sir Humphry Davy and others in early 1800s.",
+  story:"Essential for glass and detergents; unique covalent bonding properties."},
+{num:6,sym:"C",name:"Carbon",mass:"12.011",group:14,period:2,cat:"nonmetal",phase:"solid",radius:67,
+  etymology:"From Latin 'carbo' meaning coal.",
+  scientist:"Known since ancient times; fundamental to organic chemistry.",
+  story:"Basis of life; forms diamonds, graphite, and other allotropes."},
+{num:7,sym:"N",name:"Nitrogen",mass:"14.007",group:15,period:2,cat:"nonmetal",phase:"gas",radius:56,
+  etymology:"From Greek 'nitron' and 'genes' meaning 'forming nitre'.",
+  scientist:"Discovered by Daniel Rutherford in 1772.",
+  story:"Major component of Earth's atmosphere; essential for proteins."},
+{num:8,sym:"O",name:"Oxygen",mass:"15.999",group:16,period:2,cat:"nonmetal",phase:"gas",radius:48,
+  etymology:"From Greek 'oxys' (acid) and 'genes' (producer).",
+  scientist:"Discovered independently by Carl Scheele and Joseph Priestley in 1774.",
+  story:"Supports combustion and respiration; vital for life."},
+{num:9,sym:"F",name:"Fluorine",mass:"18.998",group:17,period:2,cat:"halogen",phase:"gas",radius:42,
+  etymology:"From Latin 'fluere' meaning to flow.",
+  scientist:"Isolated by Henri Moissan in 1886.",
+  story:"Highly reactive and toxic; used in toothpaste and refrigerants."},
+{num:10,sym:"Ne",name:"Neon",mass:"20.180",group:18,period:2,cat:"noble",phase:"gas",radius:38,
+  etymology:"From Greek 'neos' meaning new.",
+  scientist:"Discovered by Sir William Ramsay and Morris Travers in 1898.",
+  story:"Used in neon lights; inert and colorless gas."},
+{num:11,sym:"Na",name:"Sodium",mass:"22.990",group:1,period:3,cat:"alkali",phase:"solid",radius:190,
+  etymology:"From English 'soda' and Latin 'natrium'.",
+  scientist:"Isolated by Humphry Davy in 1807.",
+  story:"Key element in table salt; important nutrient."},
+{num:12,sym:"Mg",name:"Magnesium",mass:"24.305",group:2,period:3,cat:"alkaline",phase:"solid",radius:145,
+  etymology:"Named after Magnesia, a district in Thessaly, Greece.",
+  scientist:"Isolated by Sir Humphry Davy in 1808.",
+  story:"Used in alloys and fireworks."},
+{num:13,sym:"Al",name:"Aluminium",mass:"26.982",group:13,period:3,cat:"post-transition",phase:"solid",radius:118,
+  etymology:"From Latin 'alumen', meaning bitter salt.",
+  scientist:"Isolated by Hans Christian Ørsted in 1825.",
+  story:"Light metal widely used in packaging and aerospace."},
+{num:14,sym:"Si",name:"Silicon",mass:"28.085",group:14,period:3,cat:"metalloid",phase:"solid",radius:111,
+  etymology:"From Latin 'silex' meaning flint.",
+  scientist:"Identified by Jöns Jakob Berzelius in 1824.",
+  story:"Foundation of modern electronics and solar energy."},
+{num:15,sym:"P",name:"Phosphorus",mass:"30.974",group:15,period:3,cat:"nonmetal",phase:"solid",radius:98,
+  etymology:"From Greek 'phosphoros' meaning light-bearer.",
+  scientist:"Discovered by Hennig Brand in 1669.",
+  story:"First element discovered chemically; phosphorescent properties."},
+{num:16,sym:"S",name:"Sulfur",mass:"32.06",group:16,period:3,cat:"nonmetal",phase:"solid",radius:88,
+  etymology:"From Latin 'sulphur'.",
+  scientist:"Known since ancient times.",
+  story:"Used in fertilizers, matches, and gunpowder."},
+{num:17,sym:"Cl",name:"Chlorine",mass:"35.45",group:17,period:3,cat:"halogen",phase:"gas",radius:79,
+  etymology:"From Greek 'chloros' meaning greenish-yellow.",
+  scientist:"Discovered by Carl Wilhelm Scheele in 1774.",
+  story:"Important disinfectant and in chemical industry."},
+{num:18,sym:"Ar",name:"Argon",mass:"39.948",group:18,period:3,cat:"noble",phase:"gas",radius:71,
+  etymology:"From Greek 'argos' meaning inactive.",
+  scientist:"Discovered by Lord Rayleigh and Sir William Ramsay in 1894.",
+  story:"Used in welding and light bulbs."},
+{num:19,sym:"K",name:"Potassium",mass:"39.098",group:1,period:4,cat:"alkali",phase:"solid",radius:243,
+  etymology:"From potash; Latin 'kalium'.",
+  scientist:"Isolated by Humphry Davy in 1807.",
+  story:"Essential for biological processes; very reactive."},
+{num:20,sym:"Ca",name:"Calcium",mass:"40.078",group:2,period:4,cat:"alkaline",phase:"solid",radius:194,
+  etymology:"From Latin 'calx' meaning lime.",
+  scientist:"Isolated by Humphry Davy in 1808.",
+  story:"Essential for bones and teeth; used in cement."},
+{num:21,sym:"Sc",name:"Scandium",mass:"44.956",group:3,period:4,cat:"transition",phase:"solid",radius:184,
+  etymology:"From Scandinavia.",
+  scientist:"Discovered by Lars Fredrik Nilson in 1879.",
+  story:"Lightweight metal used in aerospace alloys."},
+{num:22,sym:"Ti",name:"Titanium",mass:"47.867",group:4,period:4,cat:"transition",phase:"solid",radius:176,
+  etymology:"Named after the Titans of Greek mythology.",
+  scientist:"Discovered by William Gregor in 1791.",
+  story:"Strong, lightweight, corrosion-resistant; used in implants."},
+{num:23,sym:"V",name:"Vanadium",mass:"50.942",group:5,period:4,cat:"transition",phase:"solid",radius:171,
+  etymology:"Named after Vanadis, Norse goddess of beauty.",
+  scientist:"Discovered by Andrés Manuel del Río in 1801.",
+  story:"Used in steel alloys; shows multiple oxidation states."},
+{num:24,sym:"Cr",name:"Chromium",mass:"51.996",group:6,period:4,cat:"transition",phase:"solid",radius:166,
+  etymology:"From Greek 'chroma' meaning color.",
+  scientist:"Discovered by Louis Nicolas Vauquelin in 1797.",
+  story:"Used in stainless steel and chrome plating."},
+{num:25,sym:"Mn",name:"Manganese",mass:"54.938",group:7,period:4,cat:"transition",phase:"solid",radius:161,
+  etymology:"From Latin 'magnes' meaning magnet.",
+  scientist:"Isolated by Johan Gottlieb Gahn in 1774.",
+  story:"Essential for steel production; important trace element."},
+{num:26,sym:"Fe",name:"Iron",mass:"55.845",group:8,period:4,cat:"transition",phase:"solid",radius:156,
+  etymology:"From Latin 'ferrum'.",
+  scientist:"Known since ancient times.",
+  story:"Most important metal in human civilization; core of Earth."},
+{num:27,sym:"Co",name:"Cobalt",mass:"58.933",group:9,period:4,cat:"transition",phase:"solid",radius:152,
+  etymology:"From German 'Kobold' meaning goblin.",
+  scientist:"Discovered by Georg Brandt in 1735.",
+  story:"Used in blue pigments and lithium-ion batteries."},
+{num:28,sym:"Ni",name:"Nickel",mass:"58.693",group:10,period:4,cat:"transition",phase:"solid",radius:149,
+  etymology:"From German 'Kupfernickel' meaning devil's copper.",
+  scientist:"Isolated by Axel Fredrik Cronstedt in 1751.",
+  story:"Used in coins, alloys, and plating; magnetic properties."},
+{num:29,sym:"Cu",name:"Copper",mass:"63.546",group:11,period:4,cat:"transition",phase:"solid",radius:145,
+  etymology:"From Latin 'cuprum', named after Cyprus.",
+  scientist:"Known since ancient times.",
+  story:"Excellent electrical conductor; distinctive red-orange color."},
+{num:30,sym:"Zn",name:"Zinc",mass:"65.38",group:12,period:4,cat:"transition",phase:"solid",radius:142,
+  etymology:"From German 'Zink'.",
+  scientist:"Isolated by Andreas Marggraf in 1746.",
+  story:"Used for galvanizing steel; essential nutrient."},
+{num:31,sym:"Ga",name:"Gallium",mass:"69.723",group:13,period:4,cat:"post-transition",phase:"solid",radius:136,
+  etymology:"From Latin 'Gallia' meaning France.",
+  scientist:"Discovered by Paul-Émile Lecoq de Boisbaudran in 1875.",
+  story:"Melts in your hand; used in semiconductors."},
+{num:32,sym:"Ge",name:"Germanium",mass:"72.630",group:14,period:4,cat:"metalloid",phase:"solid",radius:125,
+  etymology:"From Latin 'Germania' meaning Germany.",
+  scientist:"Discovered by Clemens Winkler in 1886.",
+  story:"Important semiconductor; predicted by Mendeleev."},
+{num:33,sym:"As",name:"Arsenic",mass:"74.922",group:15,period:4,cat:"metalloid",phase:"solid",radius:114,
+  etymology:"From Greek 'arsenikon' meaning yellow orpiment.",
+  scientist:"Known since ancient times.",
+  story:"Toxic metalloid; used in semiconductors and pesticides."},
+{num:34,sym:"Se",name:"Selenium",mass:"78.971",group:16,period:4,cat:"nonmetal",phase:"solid",radius:103,
+  etymology:"From Greek 'selene' meaning moon.",
+  scientist:"Discovered by Jöns Jakob Berzelius in 1817.",
+  story:"Essential trace element; photoconductor properties."},
+{num:35,sym:"Br",name:"Bromine",mass:"79.904",group:17,period:4,cat:"halogen",phase:"liquid",radius:94,
+  etymology:"From Greek 'bromos' meaning stench.",
+  scientist:"Discovered by Antoine Jérôme Balard in 1826.",
+  story:"Only nonmetallic element liquid at room temperature besides mercury."},
+{num:36,sym:"Kr",name:"Krypton",mass:"83.798",group:18,period:4,cat:"noble",phase:"gas",radius:88,
+  etymology:"From Greek 'kryptos' meaning hidden.",
+  scientist:"Discovered by Sir William Ramsay and Morris Travers in 1898.",
+  story:"Used in high-performance lighting and laser technology."},
+{num:37,sym:"Rb",name:"Rubidium",mass:"85.468",group:1,period:5,cat:"alkali",phase:"solid",radius:265,
+  etymology:"From Latin 'rubidus' meaning deep red.",
+  scientist:"Discovered by Robert Bunsen and Gustav Kirchhoff in 1861.",
+  story:"Used in atomic clocks; extremely reactive metal."},
+{num:38,sym:"Sr",name:"Strontium",mass:"87.62",group:2,period:5,cat:"alkaline",phase:"solid",radius:219,
+  etymology:"Named after Strontian, Scotland.",
+  scientist:"Discovered by Adair Crawford in 1790.",
+  story:"Produces brilliant red color in fireworks."},
+{num:39,sym:"Y",name:"Yttrium",mass:"88.906",group:3,period:5,cat:"transition",phase:"solid",radius:212,
+  etymology:"Named after Ytterby, Sweden.",
+  scientist:"Discovered by Johan Gadolin in 1794.",
+  story:"Used in superconductors and laser crystals."},
+{num:40,sym:"Zr",name:"Zirconium",mass:"91.224",group:4,period:5,cat:"transition",phase:"solid",radius:206,
+  etymology:"From Persian 'zargon' meaning gold-colored.",
+  scientist:"Discovered by Martin Heinrich Klaproth in 1789.",
+  story:"Used in nuclear reactors due to low neutron absorption."},
+{num:41,sym:"Nb",name:"Niobium",mass:"92.906",group:5,period:5,cat:"transition",phase:"solid",radius:198,
+  etymology:"Named after Niobe from Greek mythology.",
+  scientist:"Discovered by Charles Hatchett in 1801.",
+  story:"Used in superconducting magnets and steel alloys."},
+{num:42,sym:"Mo",name:"Molybdenum",mass:"95.95",group:6,period:5,cat:"transition",phase:"solid",radius:190,
+  etymology:"From Greek 'molybdos' meaning lead-like.",
+  scientist:"Discovered by Carl Wilhelm Scheele in 1778.",
+  story:"Essential trace element; strengthens steel significantly."},
+{num:43,sym:"Tc",name:"Technetium",mass:"98",group:7,period:5,cat:"transition",phase:"solid",radius:183,
+  etymology:"From Greek 'technetos' meaning artificial.",
+  scientist:"Discovered by Emilio Segrè and Carlo Perrier in 1937.",
+  story:"First artificially produced element; used in medical imaging."},
+{num:44,sym:"Ru",name:"Ruthenium",mass:"101.07",group:8,period:5,cat:"transition",phase:"solid",radius:178,
+  etymology:"From Latin 'Ruthenia' meaning Russia.",
+  scientist:"Discovered by Karl Ernst Claus in 1844.",
+  story:"Used in hard-wearing electrical contacts and catalysts."},
+{num:45,sym:"Rh",name:"Rhodium",mass:"102.91",group:9,period:5,cat:"transition",phase:"solid",radius:173,
+  etymology:"From Greek 'rhodon' meaning rose-colored.",
+  scientist:"Discovered by William Hyde Wollaston in 1803.",
+  story:"Most expensive precious metal; used in catalytic converters."},
+{num:46,sym:"Pd",name:"Palladium",mass:"106.42",group:10,period:5,cat:"transition",phase:"solid",radius:169,
+  etymology:"Named after the asteroid Pallas.",
+  scientist:"Discovered by William Hyde Wollaston in 1803.",
+  story:"Can absorb 900 times its volume of hydrogen gas."},
+{num:47,sym:"Ag",name:"Silver",mass:"107.87",group:11,period:5,cat:"transition",phase:"solid",radius:165,
+  etymology:"From Latin 'argentum'.",
+  scientist:"Known since ancient times.",
+  story:"Best electrical and thermal conductor of all elements."},
+{num:48,sym:"Cd",name:"Cadmium",mass:"112.41",group:12,period:5,cat:"transition",phase:"solid",radius:161,
+  etymology:"From Greek 'kadmeia' meaning calamine.",
+  scientist:"Discovered by Friedrich Stromeyer in 1817.",
+  story:"Toxic heavy metal; used in batteries and pigments."},
+{num:49,sym:"In",name:"Indium",mass:"114.82",group:13,period:5,cat:"post-transition",phase:"solid",radius:156,
+  etymology:"Named for its indigo spectral line.",
+  scientist:"Discovered by Ferdinand Reich and Hieronymus Richter in 1863.",
+  story:"Soft metal used in touchscreens and semiconductors."},
+{num:50,sym:"Sn",name:"Tin",mass:"118.71",group:14,period:5,cat:"post-transition",phase:"solid",radius:145,
+  etymology:"From Latin 'stannum'.",
+  scientist:"Known since ancient times.",
+  story:"Has two main allotropes: white tin and gray tin."},
+{num:51,sym:"Sb",name:"Antimony",mass:"121.76",group:15,period:5,cat:"metalloid",phase:"solid",radius:133,
+  etymology:"From Greek 'anti-monos' meaning not alone.",
+  scientist:"Known since ancient times.",
+  story:"Used in flame retardants and semiconductor alloys."},
+{num:52,sym:"Te",name:"Tellurium",mass:"127.60",group:16,period:5,cat:"metalloid",phase:"solid",radius:123,
+  etymology:"From Latin 'tellus' meaning earth.",
+  scientist:"Discovered by Franz-Joseph Müller von Reichenstein in 1782.",
+  story:"Brittle metalloid used in thermoelectric devices."},
+{num:53,sym:"I",name:"Iodine",mass:"126.90",group:17,period:5,cat:"halogen",phase:"solid",radius:115,
+  etymology:"From Greek 'ioeides' meaning violet-colored.",
+  scientist:"Discovered by Bernard Courtois in 1811.",
+  story:"Essential for thyroid function; sublimates to violet vapor."},
+{num:54,sym:"Xe",name:"Xenon",mass:"131.29",group:18,period:5,cat:"noble",phase:"gas",radius:108,
+  etymology:"From Greek 'xenos' meaning stranger.",
+  scientist:"Discovered by Sir William Ramsay and Morris Travers in 1898.",
+  story:"Used in ion propulsion systems and anesthesia."},
+{num:55,sym:"Cs",name:"Caesium",mass:"132.91",group:1,period:6,cat:"alkali",phase:"solid",radius:298,
+  etymology:"From Latin 'caesius' meaning sky-blue.",
+  scientist:"Discovered by Robert Bunsen and Gustav Kirchhoff in 1860.",
+  story:"Most electropositive element; used in atomic clocks."},
+{num:56,sym:"Ba",name:"Barium",mass:"137.33",group:2,period:6,cat:"alkaline",phase:"solid",radius:253,
+  etymology:"From Greek 'barys' meaning heavy.",
+  scientist:"Isolated by Sir Humphry Davy in 1808.",
+  story:"Used in X-ray imaging as contrast agent."},
+{num:57,sym:"La",name:"Lanthanum",mass:"138.91",group:3,period:6,cat:"lanthanide",phase:"solid",radius:195,
+  etymology:"From Greek 'lanthanein' meaning to lie hidden.",
+  scientist:"Discovered by Carl Gustaf Mosander in 1839.",
+  story:"First of the lanthanide series; used in camera lenses."},
+{num:58,sym:"Ce",name:"Cerium",mass:"140.12",group:3,period:6,cat:"lanthanide",phase:"solid",radius:185,
+  etymology:"Named after the asteroid Ceres.",
+  scientist:"Discovered by Jöns Jakob Berzelius and Wilhelm Hisinger in 1803.",
+  story:"Most abundant rare earth element; used in catalytic converters."},
+{num:59,sym:"Pr",name:"Praseodymium",mass:"140.91",group:3,period:6,cat:"lanthanide",phase:"solid",radius:247,
+  etymology:"From Greek 'prasios didymos' meaning green twin.",
+  scientist:"Discovered by Carl Auer von Welsbach in 1885.",
+  story:"Used in aircraft engines and permanent magnets."},
+{num:60,sym:"Nd",name:"Neodymium",mass:"144.24",group:3,period:6,cat:"lanthanide",phase:"solid",radius:206,
+  etymology:"From Greek 'neos didymos' meaning new twin.",
+  scientist:"Discovered by Carl Auer von Welsbach in 1885.",
+  story:"Creates the strongest permanent magnets known."},
+{num:61,sym:"Pm",name:"Promethium",mass:"145",group:3,period:6,cat:"lanthanide",phase:"solid",radius:205,
+  etymology:"Named after Prometheus from Greek mythology.",
+  scientist:"Discovered by Charles D. Coryell and Jacob A. Marinsky in 1945.",
+  story:"Only radioactive rare earth element."},
+{num:62,sym:"Sm",name:"Samarium",mass:"150.36",group:3,period:6,cat:"lanthanide",phase:"solid",radius:238,
+  etymology:"Named after the mineral samarskite.",
+  scientist:"Discovered by Paul-Émile Lecoq de Boisbaudran in 1879.",
+  story:"Used in permanent magnets and neutron absorption."},
+{num:63,sym:"Eu",name:"Europium",mass:"151.96",group:3,period:6,cat:"lanthanide",phase:"solid",radius:231,
+  etymology:"Named after Europe.",
+  scientist:"Discovered by Eugène-Anatole Demarçay in 1901.",
+  story:"Most reactive rare earth element; used in phosphors."},
+{num:64,sym:"Gd",name:"Gadolinium",mass:"157.25",group:3,period:6,cat:"lanthanide",phase:"solid",radius:233,
+  etymology:"Named after Johan Gadolin, Finnish chemist.",
+  scientist:"Discovered by Jean Charles Galissard de Marignac in 1880.",
+  story:"Used in MRI contrast agents; highest neutron absorption."},
+{num:65,sym:"Tb",name:"Terbium",mass:"158.93",group:3,period:6,cat:"lanthanide",phase:"solid",radius:225,
+  etymology:"Named after Ytterby, Sweden.",
+  scientist:"Discovered by Carl Gustaf Mosander in 1843.",
+  story:"Used in green phosphors and magneto-optical devices."},
+{num:66,sym:"Dy",name:"Dysprosium",mass:"162.50",group:3,period:6,cat:"lanthanide",phase:"solid",radius:228,
+  etymology:"From Greek 'dysprositos' meaning hard to obtain.",
+  scientist:"Discovered by Paul-Émile Lecoq de Boisbaudran in 1886.",
+  story:"Used in high-performance permanent magnets."},
+{num:67,sym:"Ho",name:"Holmium",mass:"164.93",group:3,period:6,cat:"lanthanide",phase:"solid",radius:226,
+  etymology:"From Latin 'Holmia' meaning Stockholm.",
+  scientist:"Discovered by Per Teodor Cleve in 1879.",
+  story:"Has the highest magnetic moment of any naturally occurring element."},
+{num:68,sym:"Er",name:"Erbium",mass:"167.26",group:3,period:6,cat:"lanthanide",phase:"solid",radius:226,
+  etymology:"Named after Ytterby, Sweden.",
+  scientist:"Discovered by Carl Gustaf Mosander in 1843.",
+  story:"Used in fiber-optic amplifiers for telecommunications."},
+{num:69,sym:"Tm",name:"Thulium",mass:"168.93",group:3,period:6,cat:"lanthanide",phase:"solid",radius:222,
+  etymology:"From Latin 'Thule', ancient name for Scandinavia.",
+  scientist:"Discovered by Per Teodor Cleve in 1879.",
+  story:"Least abundant rare earth element except promethium."},
+{num:70,sym:"Yb",name:"Ytterbium",mass:"173.05",group:3,period:6,cat:"lanthanide",phase:"solid",radius:222,
+  etymology:"Named after Ytterby, Sweden.",
+  scientist:"Discovered by Jean Charles Galissard de Marignac in 1878.",
+  story:"Used in atomic clocks and stress gauges."},
+{num:71,sym:"Lu",name:"Lutetium",mass:"174.97",group:3,period:6,cat:"lanthanide",phase:"solid",radius:217,
+  etymology:"From Latin 'Lutetia', ancient name for Paris.",
+  scientist:"Discovered by Georges Urbain, Carl Auer von Welsbach, and Charles James in 1907.",
+  story:"Last lanthanide to be discovered; hardest and densest rare earth."},
+{num:72,sym:"Hf",name:"Hafnium",mass:"178.49",group:4,period:6,cat:"transition",phase:"solid",radius:208,
+  etymology:"From Latin 'Hafnia', medieval name for Copenhagen.",
+  scientist:"Discovered by Dirk Coster and George de Hevesy in 1923.",
+  story:"Used in nuclear reactor control rods."},
+{num:73,sym:"Ta",name:"Tantalum",mass:"180.95",group:5,period:6,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Tantalus from Greek mythology.",
+  scientist:"Discovered by Anders Gustaf Ekeberg in 1802.",
+  story:"Extremely corrosion-resistant; used in electronic capacitors."},
+{num:74,sym:"W",name:"Tungsten",mass:"183.84",group:6,period:6,cat:"transition",phase:"solid",radius:193,
+  etymology:"From Swedish 'tung sten' meaning heavy stone.",
+  scientist:"Discovered by Juan José Elhuyar and Fausto Elhuyar in 1783.",
+  story:"Highest melting point of all metals; used in light bulb filaments."},
+{num:75,sym:"Re",name:"Rhenium",mass:"186.21",group:7,period:6,cat:"transition",phase:"solid",radius:188,
+  etymology:"From Latin 'Rhenus', the Rhine river.",
+  scientist:"Discovered by Ida Noddack, Walter Noddack, and Otto Berg in 1925.",
+  story:"One of the rarest elements in Earth's crust."},
+{num:76,sym:"Os",name:"Osmium",mass:"190.23",group:8,period:6,cat:"transition",phase:"solid",radius:185,
+  etymology:"From Greek 'osme' meaning smell.",
+  scientist:"Discovered by Smithson Tennant in 1803.",
+  story:"Densest naturally occurring element."},
+{num:77,sym:"Ir",name:"Iridium",mass:"192.22",group:9,period:6,cat:"transition",phase:"solid",radius:180,
+  etymology:"From Greek 'iris' meaning rainbow.",
+  scientist:"Discovered by Smithson Tennant in 1803.",
+  story:"Second densest element; extremely corrosion-resistant."},
+{num:78,sym:"Pt",name:"Platinum",mass:"195.08",group:10,period:6,cat:"transition",phase:"solid",radius:177,
+  etymology:"From Spanish 'platina' meaning little silver.",
+  scientist:"Known in pre-Columbian America; first described by Antonio de Ulloa in 1748.",
+  story:"More valuable than gold; used in catalytic converters and jewelry."},
+{num:79,sym:"Au",name:"Gold",mass:"196.97",group:11,period:6,cat:"transition",phase:"solid",radius:174,
+  etymology:"From Latin 'aurum' meaning shining dawn.",
+  scientist:"Known since ancient times.",
+  story:"Chemical symbol Au; historically used as currency and standard of value."},
+{num:80,sym:"Hg",name:"Mercury",mass:"200.59",group:12,period:6,cat:"transition",phase:"liquid",radius:171,
+  etymology:"Named after Roman god Mercury; Latin 'hydrargyrum' means liquid silver.",
+  scientist:"Known since ancient times.",
+  story:"Only metal that's liquid at room temperature; highly toxic."},
+{num:81,sym:"Tl",name:"Thallium",mass:"204.38",group:13,period:6,cat:"post-transition",phase:"solid",radius:156,
+  etymology:"From Greek 'thallos' meaning green shoot (green spectral line).",
+  scientist:"Discovered by William Crookes in 1861.",
+  story:"Extremely toxic; once used in rat poison and insecticides."},
+{num:82,sym:"Pb",name:"Lead",mass:"207.2",group:14,period:6,cat:"post-transition",phase:"solid",radius:154,
+  etymology:"From Latin 'plumbum'.",
+  scientist:"Known since ancient times.",
+  story:"Dense, toxic metal; phased out of gasoline and paint."},
+{num:83,sym:"Bi",name:"Bismuth",mass:"208.98",group:15,period:6,cat:"post-transition",phase:"solid",radius:143,
+  etymology:"From German 'weiße Masse' meaning white mass.",
+  scientist:"Known since medieval times.",
+  story:"Most diamagnetic element; used in cosmetics and medicine."},
+{num:84,sym:"Po",name:"Polonium",mass:"209",group:16,period:6,cat:"metalloid",phase:"solid",radius:135,
+  etymology:"Named after Poland, Marie Curie's homeland.",
+  scientist:"Discovered by Marie and Pierre Curie in 1898.",
+  story:"Highly radioactive; used to eliminate static electricity."},
+{num:85,sym:"At",name:"Astatine",mass:"210",group:17,period:6,cat:"halogen",phase:"solid",radius:127,
+  etymology:"From Greek 'astatos' meaning unstable.",
+  scientist:"Synthesized by Dale R. Corson, Kenneth Ross MacKenzie, and Emilio Segrè in 1940.",
+  story:"Rarest naturally occurring halogen; extremely radioactive."},
+{num:86,sym:"Rn",name:"Radon",mass:"222",group:18,period:6,cat:"noble",phase:"gas",radius:120,
+  etymology:"Named from radium, from which it's produced.",
+  scientist:"Discovered by Friedrich Ernst Dorn in 1900.",
+  story:"Radioactive gas that can accumulate in buildings; health hazard."},
+{num:87,sym:"Fr",name:"Francium",mass:"223",group:1,period:7,cat:"alkali",phase:"solid",radius:348,
+  etymology:"Named after France.",
+  scientist:"Discovered by Marguerite Perey in 1939.",
+  story:"Most electropositive and least stable alkali metal."},
+{num:88,sym:"Ra",name:"Radium",mass:"226",group:2,period:7,cat:"alkaline",phase:"solid",radius:283,
+  etymology:"From Latin 'radius' meaning ray.",
+  scientist:"Discovered by Marie and Pierre Curie in 1898.",
+  story:"Once used in luminous paints; highly radioactive and dangerous."},
+{num:89,sym:"Ac",name:"Actinium",mass:"227",group:3,period:7,cat:"actinide",phase:"solid",radius:260,
+  etymology:"From Greek 'aktinos' meaning ray.",
+  scientist:"Discovered by André-Louis Debierne in 1899.",
+  story:"First member of the actinide series; glows in the dark."},
+{num:90,sym:"Th",name:"Thorium",mass:"232.04",group:3,period:7,cat:"actinide",phase:"solid",radius:237,
+  etymology:"Named after Thor, Norse god of thunder.",
+  scientist:"Discovered by Jöns Jakob Berzelius in 1829.",
+  story:"Potential nuclear fuel; more abundant than uranium."},
+{num:91,sym:"Pa",name:"Protactinium",mass:"231.04",group:3,period:7,cat:"actinide",phase:"solid",radius:243,
+  etymology:"From Greek 'protos aktinos' meaning first ray.",
+  scientist:"Discovered by Otto Hahn and Lise Meitner in 1917.",
+  story:"Extremely rare and radioactive; toxic and dangerous."},
+{num:92,sym:"U",name:"Uranium",mass:"238.03",group:3,period:7,cat:"actinide",phase:"solid",radius:240,
+  etymology:"Named after the planet Uranus.",
+  scientist:"Discovered by Martin Heinrich Klaproth in 1789.",
+  story:"Primary fuel for nuclear power and weapons; weakly radioactive."},
+{num:93,sym:"Np",name:"Neptunium",mass:"237",group:3,period:7,cat:"actinide",phase:"solid",radius:221,
+  etymology:"Named after the planet Neptune.",
+  scientist:"Synthesized by Edwin McMillan and Philip Abelson in 1940.",
+  story:"First transuranium element discovered; used in nuclear research."},
+{num:94,sym:"Pu",name:"Plutonium",mass:"244",group:3,period:7,cat:"actinide",phase:"solid",radius:243,
+  etymology:"Named after the dwarf planet Pluto.",
+  scientist:"Synthesized by Glenn T. Seaborg's team in 1940-41.",
+  story:"Key material in nuclear weapons; extremely toxic."},
+{num:95,sym:"Am",name:"Americium",mass:"243",group:3,period:7,cat:"actinide",phase:"solid",radius:244,
+  etymology:"Named after the Americas.",
+  scientist:"Synthesized by Glenn T. Seaborg's team in 1944.",
+  story:"Used in smoke detectors; artificially produced element."},
+{num:96,sym:"Cm",name:"Curium",mass:"247",group:3,period:7,cat:"actinide",phase:"solid",radius:245,
+  etymology:"Named after Marie and Pierre Curie.",
+  scientist:"Synthesized by Glenn T. Seaborg's team in 1944.",
+  story:"Glows red in the dark due to radioactive decay."},
+{num:97,sym:"Bk",name:"Berkelium",mass:"247",group:3,period:7,cat:"actinide",phase:"solid",radius:244,
+  etymology:"Named after Berkeley, California.",
+  scientist:"Synthesized by Glenn T. Seaborg's team in 1949.",
+  story:"Extremely difficult to produce; only microscopic amounts exist."},
+{num:98,sym:"Cf",name:"Californium",mass:"251",group:3,period:7,cat:"actinide",phase:"solid",radius:245,
+  etymology:"Named after California.",
+  scientist:"Synthesized by Glenn T. Seaborg's team in 1950.",
+  story:"Powerful neutron source; used in nuclear startup sources."},
+{num:99,sym:"Es",name:"Einsteinium",mass:"252",group:3,period:7,cat:"actinide",phase:"solid",radius:245,
+  etymology:"Named after Albert Einstein.",
+  scientist:"Discovered by Albert Ghiorso and co-workers in 1952.",
+  story:"First discovered in debris from hydrogen bomb test."},
+{num:100,sym:"Fm",name:"Fermium",mass:"257",group:3,period:7,cat:"actinide",phase:"solid",radius:245,
+  etymology:"Named after Enrico Fermi.",
+  scientist:"Discovered by Albert Ghiorso and co-workers in 1952.",
+  story:"Produced only in particle accelerators; extremely short-lived."},
+{num:101,sym:"Md",name:"Mendelevium",mass:"258",group:3,period:7,cat:"actinide",phase:"solid",radius:246,
+  etymology:"Named after Dmitri Mendeleev.",
+  scientist:"Synthesized by Albert Ghiorso and co-workers in 1955.",
+  story:"Named to honor the creator of the periodic table."},
+{num:102,sym:"No",name:"Nobelium",mass:"259",group:3,period:7,cat:"actinide",phase:"solid",radius:246,
+  etymology:"Named after Alfred Nobel.",
+  scientist:"First claimed by various groups; confirmed at Dubna in 1966.",
+  story:"Disputed discovery; extremely short half-life."},
+{num:103,sym:"Lr",name:"Lawrencium",mass:"266",group:3,period:7,cat:"actinide",phase:"solid",radius:246,
+  etymology:"Named after Ernest O. Lawrence.",
+  scientist:"Synthesized by Albert Ghiorso and co-workers in 1961.",
+  story:"Last member of the actinide series; completes 5f electron shell."},
+{num:104,sym:"Rf",name:"Rutherfordium",mass:"267",group:4,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Ernest Rutherford.",
+  scientist:"Synthesized at JINR Dubna and GSI in late 1960s.",
+  story:"First transactinide element; superheavy and unstable."},
+{num:105,sym:"Db",name:"Dubnium",mass:"268",group:5,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Dubna, Russia.",
+  scientist:"Synthesized at JINR Dubna and LBNL in 1968-1970.",
+  story:"Named after the Russian research city where it was discovered."},
+{num:106,sym:"Sg",name:"Seaborgium",mass:"269",group:6,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Glenn T. Seaborg.",
+  scientist:"Synthesized by Albert Ghiorso's team at LBNL in 1974.",
+  story:"First element named after a living person."},
+{num:107,sym:"Bh",name:"Bohrium",mass:"270",group:7,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Niels Bohr.",
+  scientist:"Synthesized at GSI Darmstadt in 1981.",
+  story:"Named after the Danish physicist who developed atomic theory."},
+{num:108,sym:"Hs",name:"Hassium",mass:"277",group:8,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Hesse (Latin: Hassia), German state.",
+  scientist:"Synthesized at GSI Darmstadt in 1984.",
+  story:"Named after the German state where GSI is located."},
+{num:109,sym:"Mt",name:"Meitnerium",mass:"278",group:9,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Lise Meitner.",
+  scientist:"Synthesized at GSI Darmstadt in 1982.",
+  story:"Named after the Austrian physicist who contributed to nuclear fission discovery."},
+{num:110,sym:"Ds",name:"Darmstadtium",mass:"281",group:10,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Darmstadt, Germany.",
+  scientist:"Synthesized at GSI Darmstadt in 1994.",
+  story:"Named after the German city where it was discovered."},
+{num:111,sym:"Rg",name:"Roentgenium",mass:"282",group:11,period:7,cat:"transition",phase:"solid",radius:200,
+  etymology:"Named after Wilhelm Röntgen.",
+  scientist:"Synthesized at GSI Darmstadt in 1994.",
+  story:"Named after the discoverer of X-rays."},
+{num:112,sym:"Cn",name:"Copernicium",mass:"285",group:12,period:7,cat:"transition",phase:"liquid",radius:200,
+  etymology:"Named after Nicolaus Copernicus.",
+  scientist:"Synthesized at GSI Darmstadt in 1996.",
+  story:"May be liquid at room temperature due to relativistic effects."},
+{num:113,sym:"Nh",name:"Nihonium",mass:"286",group:13,period:7,cat:"post-transition",phase:"solid",radius:200,
+  etymology:"From 'Nihon', Japanese name for Japan.",
+  scientist:"Synthesized at RIKEN in Japan in 2004.",
+  story:"First element discovered in East Asia to be officially named."},
+{num:114,sym:"Fl",name:"Flerovium",mass:"289",group:14,period:7,cat:"post-transition",phase:"solid",radius:200,
+  etymology:"Named after Flerov Laboratory of Nuclear Reactions.",
+  scientist:"Synthesized at JINR Dubna in 1999.",
+  story:"May have unusual properties due to relativistic effects."},
+{num:115,sym:"Mc",name:"Moscovium",mass:"290",group:15,period:7,cat:"post-transition",phase:"solid",radius:200,
+  etymology:"Named after Moscow region, Russia.",
+  scientist:"Synthesized by JINR-LLNL collaboration in 2003.",
+  story:"Superheavy element with very short half-life."},
+{num:116,sym:"Lv",name:"Livermorium",mass:"293",group:16,period:7,cat:"post-transition",phase:"solid",radius:200,
+  etymology:"Named after Lawrence Livermore National Laboratory.",
+  scientist:"Synthesized by JINR-LLNL collaboration in 2000.",
+  story:"Superheavy element; properties are largely theoretical."},
+{num:117,sym:"Ts",name:"Tennessine",mass:"294",group:17,period:7,cat:"halogen",phase:"solid",radius:200,
+  etymology:"Named after Tennessee, USA.",
+  scientist:"Synthesized by JINR-ORNL-Vanderbilt collaboration in 2010.",
+  story:"Second-heaviest known element; may not behave like other halogens."},
+{num:118,sym:"Og",name:"Oganesson",mass:"294",group:18,period:7,cat:"noble",phase:"gas",radius:200,
+  etymology:"Named after Yuri Oganessian.",
+  scientist:"Synthesized by JINR-LLNL collaboration in 2002.",
+  story:"Heaviest known element; may not behave like other noble gases due to relativistic effects."}
+];
+
+const catClass = {
+  'alkali':'cat-alkali',
+  'alkaline':'cat-alkaline',
+  'transition':'cat-transition',
+  'post-transition':'cat-post-transition',
+  'metalloid':'cat-metalloid',
+  'nonmetal':'cat-nonmetal',
+  'halogen':'cat-halogen',
+  'noble':'cat-noble',
+  'lanthanide':'cat-lanthanide',
+  'actinide':'cat-actinide'
+};
+
+// Build category filter chips
+const chipsC = document.getElementById('chips');
+categories.forEach(c => {
+  const el = document.createElement('button');
+  el.className = 'chip';
+  el.textContent = c.label;
+  el.dataset.id = c.id;
+  el.setAttribute('aria-pressed', 'false');
+  el.addEventListener('click', () => {
+    el.classList.toggle('active');
+    el.setAttribute('aria-pressed', el.classList.contains('active'));
+    applyFilters();
+  });
+  chipsC.appendChild(el);
+});
+
+// Build periodic table grid
+const grid = document.getElementById('ptable');
+const maxPeriod = Math.max(...elements.map(e => e.period));
+const cells = [];
+for(let p = 1; p <= maxPeriod; p++) {
+  for(let g = 1; g <= 18; g++) {
+    const e = elements.find(x => x.group === g && x.period === p);
+    if(e) {
+      const classCat = catClass[e.cat] || '';
+      cells.push(`<button class="element ${classCat}" data-num="${e.num}" data-cat="${e.cat}" aria-label="${e.name}, atomic number ${e.num}">
+        <div class="number">${e.num}</div>
+        <div class="symbol">${e.sym}</div>
+        <div class="name">${e.name}</div>
+      </button>`);
+    } else {
+      cells.push('<div></div>');
+    }
+  }
+}
+grid.innerHTML = cells.join('');
+
+// Details panel
+const details = document.getElementById('details');
+
+function showDetails(e) {
+  details.innerHTML = `
+    <div class="row" role="region" aria-label="Basic info">
+      <span class="pill">${e.sym}</span>
+      <div class="kv"><b>${e.name}</b></div>
+      <div class="kv">No: <b>${e.num}</b></div>
+      <div class="kv">Mass: <b>${e.mass}</b></div>
+      <div class="kv">Group: <b>${e.group}</b></div>
+      <div class="kv">Period: <b>${e.period}</b></div>
+      <div class="kv">Category: <b>${capitalize(e.cat)}</b></div>
+      <div class="kv">Phase: <b>${capitalize(e.phase || '—')}</b></div>
+    </div>
+    <div class="model">
+      <div class="canvas-wrap" role="img" aria-label="Bohr model atomic structure of ${e.name}">
+        <canvas id="model" width="300" height="300"></canvas>
+      </div>
+      <div class="legend-mini">
+        Visual model (illustrative):<br>
+        - Bohr-style shells: electrons per shell.<br>
+        - Outer ring scale approximates atomic radius.<br>
+        - Dot color indicates phase: gas (cyan), liquid (orange), solid (lime).
+      </div>
+    </div>
+    <section class="etymology" role="region" aria-label="Etymology">
+      <h3>Etymology</h3>
+      <p>${e.etymology || 'No etymology information available.'}</p>
+    </section>
+    <section class="scientist" role="region" aria-label="Discoverer or Scientist">
+      <h3>Scientist</h3>
+      <p>${e.scientist || 'No scientist information available.'}</p>
+    </section>
+    <section class="story" role="region" aria-label="Interesting stories">
+      <h3>Story</h3>
+      <p>${e.story || 'No story information available.'}</p>
+    </section>
+  `;
+  drawModel(e);
+}
+
+function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function electronsPerShell(Z) {
+  const caps = [2,8,18,18,32,32,8];
+  const out = [];
+  let left = Z;
+  for(const c of caps) {
+    if(left <= 0) break;
+    const put = Math.min(c, left);
+    out.push(put);
+    left -= put;
+  }
+  return out;
+}
+
+function drawModel(e) {
+  const canvas = document.getElementById('model');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2;
+  const shellColor = 'rgba(160,180,220,0.35)';
+  const nucleusColor = '#ff7f50';
+  const textColor = '#e8ecf1';
+  const phaseColor =
+    e.phase === 'gas' ? '#4cc9f0' :
+    e.phase === 'liquid' ? '#ffa500' : '#7CFC00';
+  const rPm = Math.max(30, Math.min(350, e.radius || 150));
+  const rOuter = 20 + (rPm - 30) * (95 / 320);
+  const shells = electronsPerShell(e.num);
+  const shellGap = 14;
+  let baseR = 28;
+  for(let i = 0; i < shells.length; i++) {
+    const r = baseR + i * shellGap;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+    ctx.strokeStyle = shellColor;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    const n = shells[i];
+    for(let k = 0; k < n; k++) {
+      const ang = (k / n) * 2 * Math.PI - Math.PI / 2;
+      const ex = cx + r * Math.cos(ang);
+      const ey = cy + r * Math.sin(ang);
+      ctx.beginPath();
+      ctx.arc(ex, ey, 3, 0, 2 * Math.PI);
+      ctx.fillStyle = phaseColor;
+      ctx.fill();
+    }
+  }
+  ctx.beginPath();
+  ctx.arc(cx, cy, baseR + (shells.length - 1) * shellGap + rOuter * 0.1, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.setLineDash([3,3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, 10, 0, 2 * Math.PI);
+  ctx.fillStyle = nucleusColor;
+  ctx.fill();
+  ctx.fillStyle = textColor;
+  ctx.font = '16px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(e.sym, cx, cy - 20);
+  ctx.font = '12px system-ui';
+  ctx.fillText(e.name, cx, cy - 5);
+  ctx.fillText(`Z=${e.num}`, cx, cy + 12);
+}
+
+function addElementListeners(){
+  document.querySelectorAll('.element').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.element').forEach(b => b.classList.remove('hit'));
+      btn.classList.add('hit');
+      const e = elements.find(x => x.num === +btn.dataset.num);
+      if (e) showDetails(e);
+    });
+  });
+}
+
+const q = document.getElementById('q');
+q.addEventListener('input', applyFilters);
+
+function getActiveCategories() {
+  return [...document.querySelectorAll('.chip.active')].map(c => c.dataset.id);
+}
+function matchesSearch(e, v) {
+  if (!v) return true;
+  const parts = v.split(/\s+/).filter(Boolean);
+  return parts.every(tok => {
+    let m;
+    if ((m = tok.match(/^group=(\d{1,2})$/))) return e.group == +m[1];
+    if ((m = tok.match(/^period=(\d)$/))) return e.period == +m[1];
+    if ((m = tok.match(/^category=([\w-]+)$/))) return (e.cat || '').toLowerCase() === m[1].toLowerCase();
+    const checkFields = [e.name, e.sym, e.etymology, e.scientist, e.story];
+    if (!isNaN(+tok)) return e.num == +tok;
+    const tokLower = tok.toLowerCase();
+    return checkFields.some(field => field && field.toLowerCase().includes(tokLower));
+  });
+}
+function applyFilters() {
+  const term = q.value.trim().toLowerCase();
+  const activeCats = new Set(getActiveCategories());
+  document.querySelectorAll('.element').forEach(btn => {
+    const e = elements.find(x => x.num === +btn.dataset.num);
+    const catOk = activeCats.size ? activeCats.has(e.cat) : true;
+    const searchOk = matchesSearch(e, term);
+    const show = catOk && searchOk;
+    btn.style.opacity = show ? '1' : '0.18';
+    btn.style.pointerEvents = show ? 'auto' : 'none';
+  });
+}
+
+addElementListeners();
+window.addEventListener('load', () => {
+  const firstElement = elements.find(e => e.num === 1);
+  if (firstElement) {
+    showDetails(firstElement);
+    const btn = document.querySelector('.element[data-num="1"]');
+    if (btn) btn.classList.add('hit');
+  }
+});
+</script>
+</body>
+</html>
