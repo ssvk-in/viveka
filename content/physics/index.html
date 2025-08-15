@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics - Viveka Interactive Learning</title>
+    <link rel="stylesheet" href="../../shared/viveka-core.css">
+    <style>
+        .header {
+            margin-bottom: var(--space-xxl);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: var(--space-md);
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .grades-container {
+            display: grid;
+            gap: var(--space-xl);
+        }
+
+        .grade-section {
+            background: var(--panel-2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            border-left: 4px solid var(--accent);
+        }
+
+        .grade-section h3 {
+            color: var(--accent);
+            margin-bottom: var(--space-lg);
+            font-size: 1.2rem;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .topic-card {
+            background: var(--panel);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform var(--transition-fast), border-color var(--transition-normal);
+        }
+
+        .topic-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255,209,102,0.25);
+        }
+
+        .topic-card h4 {
+            margin: 0 0 var(--space-md) 0;
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .topic-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .topic-card.available {
+            border-left: 4px solid var(--hit);
+        }
+
+        .topic-card.coming-soon {
+            opacity: 0.7;
+            border-left: 4px solid var(--chip-b);
+        }
+
+        .topic-card.coming-soon:hover {
+            opacity: 0.8;
+        }
+
+        .topic-card a {
+            color: var(--hit);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .topic-card a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            background: var(--panel-2);
+            border: 1px solid rgba(77, 201, 240, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-top: var(--space-xl);
+            text-align: center;
+        }
+
+        .footer-note h4 {
+            color: var(--hit);
+            margin-bottom: var(--space-md);
+        }
+
+        .footer-note p {
+            color: var(--text);
+        }
+
+        .footer-note small {
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Viveka Breadcrumb Navigation -->
+    <div class="viveka-breadcrumb">
+        <a href="../index.html">Home</a> > <strong>Physics</strong>
+    </div>
+
+    <div class="viveka-app">
+        <div class="header">
+            <h1>PHYSICS</h1>
+            <p>Interactive Simulations & Virtual Laboratories</p>
+        </div>
+
+        <div class="grades-container">
+            
+            <div class="grade-section">
+                <h3>Grade 10 - Light & Electricity</h3>
+                <div class="topics-grid">
+                    <div class="topic-card available">
+                        <h4><a href="grade-10/optics-lab.html">Optics Laboratory</a> <span class="viveka-badge viveka-badge-success">Available</span></h4>
+                        <p>Interactive experiments with reflection, refraction, and optical instruments. Explore the behavior of light through hands-on simulations.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Electricity & Magnetism <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Explore electric circuits, magnetic fields, and electromagnetic induction through interactive demonstrations.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Light Reflection & Refraction <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Understand the laws of reflection and refraction with mirrors, lenses, and prisms.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grade-section">
+                <h3>Grade 9 - Motion & Forces</h3>
+                <div class="topics-grid">
+                    <div class="topic-card coming-soon">
+                        <h4>Motion in a Straight Line <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Visualize concepts of displacement, velocity, and acceleration through interactive graphs and simulations.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Gravitation <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Explore Newton's law of gravitation and its applications in planetary motion.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grade-section">
+                <h3>Grade 8 - Forces & Pressure</h3>
+                <div class="topics-grid">
+                    <div class="topic-card coming-soon">
+                        <h4>Force & Pressure <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Interactive experiments with different types of forces and pressure applications.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Sound <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Explore sound waves, frequency, amplitude, and musical instruments.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grade-section">
+                <h3>Grade 7 - Light & Motion</h3>
+                <div class="topics-grid">
+                    <div class="topic-card coming-soon">
+                        <h4>Light <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Basic concepts of light, shadows, and simple optical phenomena.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Motion & Time <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Introduction to motion concepts and measurement of time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grade-section">
+                <h3>Grade 6 - Basic Physics</h3>
+                <div class="topics-grid">
+                    <div class="topic-card coming-soon">
+                        <h4>Light, Shadows & Reflections <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Introduction to light, how shadows are formed, and basic reflection concepts.</p>
+                    </div>
+                    
+                    <div class="topic-card coming-soon">
+                        <h4>Fun with Magnets <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
+                        <p>Explore magnetic properties and simple magnetic phenomena.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-note">
+            <h4>More Interactive Content Coming Soon!</h4>
+            <p>We're continuously adding new physics simulations and experiments. Each topic will include hands-on activities, real-time feedback, and comprehensive explanations.</p>
+            <p><small>This is an open source project - contributions welcome!</small></p>
+        </div>
+    </div>
+</body>
+</html>

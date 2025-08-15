@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viveka - Interactive Learning Platform</title>
+    <link rel="stylesheet" href="shared/viveka-core.css">
+    <style>
+        .header {
+            margin-bottom: var(--space-xxl);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: var(--space-md);
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: var(--space-lg);
+        }
+
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-top: var(--space-xxl);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: var(--space-xxl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted);
+        }
+
+        .footer strong {
+            color: var(--accent);
+        }
+
+        .footer small {
+            color: var(--muted);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="viveka-app">
+        <div class="header">
+            <h1>VIVEKA</h1>
+        </div>
+
+        <div class="subjects">
+            <div class="viveka-subject-card">
+                <h3>🔬 Physics</h3>
+                <p>Interactive simulations and virtual labs</p>
+                <ul class="viveka-content-list">
+                    <li><a href="content/physics/index.html">Physics Subject Page</a></li>
+                    <li><a href="content/physics/grade-10/optics-lab.html">Grade 10: Optics Laboratory</a> <span class="viveka-badge viveka-badge-success">Available</span></li>
+                    <li>Electricity & Magnetism (Coming Soon)</li>
+                    <li>Light Reflection & Refraction (Coming Soon)</li>
+                </ul>
+            </div>
+
+            <div class="viveka-subject-card">
+                <h3>⚗️ Chemistry</h3>
+                <p>Molecular tools and interactive periodic table</p>
+                <ul class="viveka-content-list">
+                    <li>Interactive Periodic Table (Coming Soon)</li>
+                    <li>Chemical Equations (Coming Soon)</li>
+                    <li>Molecular Simulator (Coming Soon)</li>
+                </ul>
+            </div>
+
+            <div class="viveka-subject-card">
+                <h3>🧬 Biology</h3>
+                <p>Cell structure and life process visualizations</p>
+                <ul class="viveka-content-list">
+                    <li>Cell Structure Explorer (Coming Soon)</li>
+                    <li>Life Processes (Coming Soon)</li>
+                    <li>Mind Maps (Coming Soon)</li>
+                </ul>
+            </div>
+
+            <div class="viveka-subject-card">
+                <h3>📊 Mathematics</h3>
+                <p>Interactive problem solving and geometric tools</p>
+                <ul class="viveka-content-list">
+                    <li>Geometric Visualizations (Coming Soon)</li>
+                    <li>Problem Solving Tools (Coming Soon)</li>
+                    <li>Interactive Graphs (Coming Soon)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>🌟 Next Step:</strong> We'll update the Physics page with the new design!</p>
+            <p><small>Built with ❤️ for students and teachers everywhere</small></p>
+        </div>
+    </div>
+</body>
+</html>

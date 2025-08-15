@@ -1,0 +1,395 @@
+/* Viveka Design System - Based on Periodictable.html Approach */
+
+:root {
+    /* Core Colors - Inspired by Periodictable.html */
+    --bg: #0f1115;                    /* Main dark background */
+    --panel: #1a1d24;                 /* Panel background */
+    --panel-2: #222634;               /* Secondary panel */
+    --text: #e8ecf1;                  /* Primary text color */
+    --muted: #aab3c0;                 /* Muted text */
+    --accent: #ffd166;                /* Accent yellow */
+    --chip: #2a2f3f;                  /* Chip background */
+    --chip-b: #39425a;                /* Chip border */
+    --hit: #4cc9f0;                   /* Highlight blue */
+    
+    /* Additional Semantic Colors */
+    --success: #28a745;               /* Success green */
+    --warning: #ffc107;               /* Warning yellow */
+    --danger: #dc3545;                /* Danger red */
+    --info: #17a2b8;                  /* Info blue */
+    
+    /* Spacing Scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-xxl: 32px;
+    
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-pill: 999px;
+    
+    /* Transitions */
+    --transition-fast: 0.08s ease;
+    --transition-normal: 0.15s ease;
+    --transition-slow: 0.25s ease;
+}
+
+/* Reset & Base Styles */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+body {
+    margin: 0; 
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: var(--bg); 
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* Typography */
+h1 {
+    text-align: center; 
+    margin: var(--space-md) 0 var(--space-sm);
+    font-weight: 700; 
+    font-size: 1.4rem;
+    color: var(--text);
+}
+
+h2 {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: var(--space-sm);
+    color: var(--text);
+}
+
+h3 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: var(--space-sm);
+    color: var(--text);
+}
+
+p {
+    margin-bottom: var(--space-md);
+    color: var(--text);
+}
+
+/* Layout Components */
+.viveka-app {
+    max-width: 1100px; 
+    margin: 0 auto; 
+    padding: var(--space-md);
+}
+
+.viveka-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-md);
+}
+
+/* Panel Components */
+.viveka-panel {
+    background: var(--panel-2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    margin-top: var(--space-sm);
+}
+
+.viveka-card {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    cursor: pointer;
+    transition: transform var(--transition-fast), border-color var(--transition-normal);
+    user-select: none;
+}
+
+.viveka-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255,209,102,0.45);
+}
+
+/* Button Components */
+.viveka-chip {
+    padding: 6px 10px; 
+    border-radius: var(--radius-pill); 
+    background: var(--chip);
+    border: 1px solid var(--chip-b); 
+    font-size: 0.8rem; 
+    cursor: pointer; 
+    user-select: none;
+    transition: background-color var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
+    color: var(--text);
+    display: inline-block;
+    text-decoration: none;
+}
+
+.viveka-chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111;
+}
+
+.viveka-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111;
+    outline: 2px solid var(--hit);
+}
+
+/* Badge Components */
+.viveka-badge {
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.viveka-badge-success {
+    background: var(--success);
+    color: white;
+}
+
+.viveka-badge-warning {
+    background: var(--warning);
+    color: #111;
+}
+
+.viveka-badge-info {
+    background: var(--info);
+    color: white;
+}
+
+.viveka-badge-accent {
+    background: var(--accent);
+    color: #111;
+}
+
+/* Input Components */
+.viveka-input {
+    flex: 1 1 260px;
+    min-width: 180px;
+    padding: 10px 12px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--panel);
+    color: var(--text);
+    outline: none;
+    font-size: 1rem;
+}
+
+.viveka-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255,209,102,0.25);
+}
+
+/* Controls & Layout */
+.viveka-controls {
+    display: flex; 
+    gap: var(--space-sm); 
+    flex-wrap: wrap; 
+    margin: var(--space-sm) 0;
+    justify-content: center;
+}
+
+.viveka-chips {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 6px; 
+    align-items: center;
+}
+
+/* Navigation Components */
+.viveka-breadcrumb {
+    background: rgba(15,17,21,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.9rem;
+    color: var(--muted);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.viveka-breadcrumb a {
+    color: var(--hit);
+    text-decoration: none;
+}
+
+.viveka-breadcrumb a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Grid Components */
+.viveka-grid {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+.viveka-grid-2 { 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+}
+
+.viveka-grid-3 { 
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+}
+
+.viveka-grid-4 { 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+}
+
+/* Subject Card Component */
+.viveka-subject-card {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    color: inherit;
+    display: block;
+    transition: transform var(--transition-fast), border-color var(--transition-normal);
+    height: 100%;
+}
+
+.viveka-subject-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255,209,102,0.25);
+}
+
+.viveka-subject-card h3 {
+    color: var(--accent);
+    margin-bottom: var(--space-md);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.viveka-subject-card p {
+    color: var(--muted);
+    margin-bottom: var(--space-lg);
+    line-height: 1.5;
+}
+
+/* Content List Component */
+.viveka-content-list {
+    list-style: none;
+    padding: 0;
+}
+
+.viveka-content-list li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.viveka-content-list li:last-child {
+    border-bottom: none;
+}
+
+.viveka-content-list a {
+    color: var(--hit);
+    text-decoration: none;
+}
+
+.viveka-content-list a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Status Components */
+.viveka-status {
+    background: var(--panel-2);
+    border: 1px solid rgba(255,209,102,0.3);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    margin: var(--space-xl) 0;
+}
+
+.viveka-status h3 {
+    color: var(--accent);
+    margin-bottom: var(--space-md);
+    font-size: 1.1rem;
+}
+
+.viveka-status p {
+    color: var(--text);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .viveka-app, .viveka-container {
+        padding: var(--space-sm);
+    }
+    
+    .viveka-grid {
+        gap: var(--space-md);
+    }
+    
+    .viveka-card, .viveka-subject-card, .viveka-panel {
+        padding: var(--space-md);
+    }
+    
+    h1 { 
+        font-size: 1.2rem; 
+    }
+}
+
+@media (max-width: 480px) {
+    .viveka-app, .viveka-container {
+        padding: var(--space-xs);
+    }
+    
+    .viveka-card, .viveka-subject-card, .viveka-panel {
+        padding: var(--space-sm);
+    }
+    
+    .viveka-chip {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Focus Styles for Keyboard Navigation */
+.viveka-card:focus,
+.viveka-subject-card:focus,
+.viveka-chip:focus,
+.viveka-input:focus,
+a:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .viveka-breadcrumb {
+        display: none;
+    }
+    
+    .viveka-card, .viveka-subject-card {
+        border: 1px solid #666;
+        break-inside: avoid;
+    }
+}
