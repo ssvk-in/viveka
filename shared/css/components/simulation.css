@@ -1,0 +1,226 @@
+/* Viveka Simulation Components CSS */
+
+/* Simulation Header */
+.viveka-sim-header {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--panel);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.viveka-sim-header h1 {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.viveka-module-select {
+  background: var(--chip);
+  color: var(--text);
+  border: 1px solid var(--chip-b);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  outline: none;
+}
+
+.viveka-module-select:focus {
+  border-color: var(--accent);
+}
+
+/* Toggle Groups */
+.viveka-toggle-group {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.viveka-toggle {
+  background: var(--chip);
+  border: 1px solid var(--chip-b);
+  color: var(--text);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-normal);
+}
+
+.viveka-toggle:hover {
+  border-color: var(--accent);
+}
+
+.viveka-toggle.active {
+  border-color: var(--hit);
+  box-shadow: inset 0 0 0 1px var(--hit);
+}
+
+/* Control Panel */
+.viveka-control-panel {
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+}
+
+.viveka-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+}
+
+.viveka-control-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  min-width: 120px;
+}
+
+.viveka-control-value {
+  min-width: 64px;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+}
+
+.viveka-checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+}
+
+.viveka-checkbox-row label {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Action Buttons */
+.viveka-action-buttons {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.viveka-btn {
+  background: var(--chip);
+  border: 1px solid var(--chip-b);
+  color: var(--text);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-normal);
+}
+
+.viveka-btn:hover {
+  border-color: var(--accent);
+}
+
+.viveka-btn.danger:hover {
+  border-color: var(--danger);
+}
+
+/* Canvas Container */
+.viveka-canvas-container {
+  background: #0d1016;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Legend */
+.viveka-legend {
+  position: absolute;
+  left: var(--space-md);
+  top: var(--space-md);
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  padding: var(--space-lg);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-md);
+  max-width: 52%;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.viveka-legend h2 {
+  margin: 0 0 var(--space-sm) 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.viveka-legend p {
+  margin: var(--space-xs) 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.viveka-legend code {
+  background: var(--chip);
+  color: var(--hit);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+}
+
+.viveka-badge {
+  font-size: 0.7rem;
+  color: var(--hit);
+  background: rgba(77, 201, 240, 0.1);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* Hints */
+.viveka-hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: var(--space-sm);
+  line-height: 1.4;
+}
+
+/* Layout */
+.viveka-sim-container {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.viveka-sim-footer {
+  color: var(--muted);
+  padding: var(--space-md);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .viveka-sim-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+  
+  .viveka-control-panel {
+    position: static;
+  }
+  
+  .viveka-legend {
+    position: static;
+    max-width: 100%;
+    margin-bottom: var(--space-md);
+  }
+}

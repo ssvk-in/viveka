@@ -55,11 +55,14 @@
             padding: var(--space-lg);
             border: 1px solid rgba(255,255,255,0.08);
             transition: transform var(--transition-fast), border-color var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
         }
 
         .topic-card:hover {
             transform: translateY(-1px);
             border-color: rgba(255,209,102,0.25);
+            text-decoration: none;
         }
 
         .topic-card h4 {
@@ -129,14 +132,14 @@
             <div class="grade-section">
                 <h3>Grade 10 - Light & Electricity</h3>
                 <div class="topics-grid">
+                    <a href="grade-10/optics-lab.html" class="topic-card available">
+                        <h4>Optics Laboratory <span class="viveka-badge viveka-badge-success">Available</span></h4>
+                        <p>Complete interactive optics simulation: reflection, refraction, lenses, interference, diffraction, polarization, and color mixing.</p>
+                    </a>
+                    
                     <div class="topic-card coming-soon">
                         <h4>Electricity & Magnetism <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
                         <p>Explore electric circuits, magnetic fields, and electromagnetic induction through interactive demonstrations.</p>
-                    </div>
-                    
-                    <div class="topic-card coming-soon">
-                        <h4>Light Reflection & Refraction <span class="viveka-badge viveka-badge-warning">Coming Soon</span></h4>
-                        <p>Understand the laws of reflection and refraction with mirrors, lenses, and prisms.</p>
                     </div>
                 </div>
             </div>
